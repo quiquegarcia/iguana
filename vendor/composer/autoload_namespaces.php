@@ -12,4 +12,6 @@ return array(
     'Symfony\\Component\\EventDispatcher' => $vendorDir . '/symfony/event-dispatcher/',
     'Symfony\\Component\\ClassLoader' => $vendorDir . '/symfony/class-loader/',
     'SessionHandlerInterface' => $vendorDir . '/symfony/http-foundation/Symfony/Component/HttpFoundation/Resources/stubs',
+    'Iguana' => $baseDir . '/src/',
+    'Calendar' => $baseDir . '/src/',
 );
