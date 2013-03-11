@@ -7,15 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing;
 use Symfony\Component\HttpKernel;
 
-function render_template($request){
-	$pages_dir = __DIR__.'/../src/pages/';
-	extract($request->attributes->all(), EXTR_SKIP);
-	ob_start();
-	include sprintf($pages_dir.'%s.php', $_route);
-
-	return new Response(ob_get_clean());
-}
-
 $request = Request::CreateFromGlobals();
 $routes = include __DIR__.'/../src/app.php';
 

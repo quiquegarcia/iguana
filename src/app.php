@@ -32,11 +32,4 @@ $routes->add('leap_year', new Routing\Route('/is_leap_year/{year}', array(
 	'_controller' => 'LeapYearController::indexAction',
 )));
 
-/**
-* Rutas para la aplicacion "hello world"
-*/
-$routes->add('hello', new Routing\Route('/hello/{name}', array('name' => 'World')));
-$routes->add('bye', new Routing\Route('/bye'));
-
-
 return $routes;
