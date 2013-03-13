@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing;
 use Symfony\Component\HttpKernel;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 $request = Request::CreateFromGlobals();
 $routes = include __DIR__.'/../src/app.php';
@@ -15,7 +16,30 @@ $context->fromRequest($request);
 $matcher = new Routing\Matcher\UrlMatcher($routes, $context);
 $resolver = new HttpKernel\Controller\ControllerResolver();
 
-$framework = new Iguana\Framework($matcher, $resolver);
+
+$dispatcher = new EventDispatcher();
+$dispatcher->addListener('response', function (Iguana\ResponseEvent $event){
+	$response = $event->getResponse();
+	if($response->isRedirection()
+		|| ($response->headers->has('Content-Type') && false === strpos($response->headers->get('Content-Type'), 'html'))
+		|| 'html' !== $event->getRequest()->getRequestFormat()
+	){
+		return;
+	}
+
+	$response->setContent($response->getContent(), 'GA CODE');
+});
+
+$dispatcher->addListener('response', function(Iguana\ResponseEvent $event){
+	$response = $event->getResponse();
+	$headers = $response->headers;
+
+	if(!$headers->has('Content-Length') && !$headers->has('Transfer-Encoding')){
+		$headers->set('Content-Length', strlen($response->getContent()));
+	}
+}, -255);
+
+$framework = new Iguana\Framework($dispatcher, $matcher, $resolver);
 $response = $framework->handle($request);
 
 $response->send();
