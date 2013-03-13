@@ -13,8 +13,13 @@ class LeapYearController
 	{
 		$leapyear = new LeapYear();
 		if($leapyear->isLeapYear($year)){
-			return new Response('Si, este es año bisiesto!');
+			$response = new Response('Si, este es año bisiesto!');
+		}else {
+			$response = new Response('No, este no es un año bisiesto');
 		}
-		return new Response('No, este no es un año bisiesto');
+		
+		$response->setTtl(10);
+
+		return $response;
 	}
 }

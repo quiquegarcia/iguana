@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing;
 use Symfony\Component\HttpKernel;
+use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 $request = Request::CreateFromGlobals();
@@ -22,6 +24,5 @@ $dispatcher->addSubscriber(new Iguana\ContentLengthListener());
 $dispatcher->addSubscriber(new Iguana\GoogleListener());
 
 $framework = new Iguana\Framework($dispatcher, $matcher, $resolver);
-$response = $framework->handle($request);
-
-$response->send();
+$framework = new HttpCache($framework, new Store(__DIR__.'/../cache'));
+$framework->handle($request)->send();
