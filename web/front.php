@@ -18,26 +18,8 @@ $resolver = new HttpKernel\Controller\ControllerResolver();
 
 
 $dispatcher = new EventDispatcher();
-$dispatcher->addListener('response', function (Iguana\ResponseEvent $event){
-	$response = $event->getResponse();
-	if($response->isRedirection()
-		|| ($response->headers->has('Content-Type') && false === strpos($response->headers->get('Content-Type'), 'html'))
-		|| 'html' !== $event->getRequest()->getRequestFormat()
-	){
-		return;
-	}
-
-	$response->setContent($response->getContent(), 'GA CODE');
-});
-
-$dispatcher->addListener('response', function(Iguana\ResponseEvent $event){
-	$response = $event->getResponse();
-	$headers = $response->headers;
-
-	if(!$headers->has('Content-Length') && !$headers->has('Transfer-Encoding')){
-		$headers->set('Content-Length', strlen($response->getContent()));
-	}
-}, -255);
+$dispatcher->addListener('response', array(new Iguana\ContentLengthListener(), 'onResponse'), -255);
+$dispatcher->addListener('response', array(new Iguana\GoogleListener(), 'onResponse'));
 
 $framework = new Iguana\Framework($dispatcher, $matcher, $resolver);
 $response = $framework->handle($request);
