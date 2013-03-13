@@ -18,8 +18,8 @@ $resolver = new HttpKernel\Controller\ControllerResolver();
 
 
 $dispatcher = new EventDispatcher();
-$dispatcher->addListener('response', array(new Iguana\ContentLengthListener(), 'onResponse'), -255);
-$dispatcher->addListener('response', array(new Iguana\GoogleListener(), 'onResponse'));
+$dispatcher->addSubscriber(new Iguana\ContentLengthListener());
+$dispatcher->addSubscriber(new Iguana\GoogleListener());
 
 $framework = new Iguana\Framework($dispatcher, $matcher, $resolver);
 $response = $framework->handle($request);
