@@ -22,6 +22,8 @@ $listener = new HttpKernel\EventListener\ExceptionListener('Calendar\\Controller
 $dispatcher->addSubscriber($listener);
 
 $dispatcher->addSubscriber(new HttpKernel\EventListener\ResponseListener('UTF-8'));
+$dispatcher->addSubscriber(new HttpKernel\EventListener\StreamedResponseListener());
+$dispatcher->addSubscriber(new Iguana\StringResponseListener());
 
 $framework = new Iguana\Framework($dispatcher, $resolver);
 

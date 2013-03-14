@@ -11,6 +11,6 @@ class ErrorController
 	{
 		$msg = 'Algo salio mal! ('.$exception->getMessage().')';
 
-		return new Response($msg, $exception->getSatusCode());
+		return new Response($msg, $exception->getStatusCode());
 	}
 }
