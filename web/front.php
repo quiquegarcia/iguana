@@ -3,29 +3,18 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing;
-use Symfony\Component\HttpKernel;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\DependencyInjection\Reference;
+
+$routes = include __DIR__.'/../src/app.php';
+$sc = include __DIR__.'/../src/container.php';
+
+$sc->register('listener.string_response', 'Iguana\StringResponseListener');
+$sc->getDefinition('dispatcher')
+	->addMethodCall('addSubscriber', array(new Reference('listener.string_response')))
+;
 
 $request = Request::CreateFromGlobals();
-$routes = include __DIR__.'/../src/app.php';
 
-$context = new Routing\RequestContext();
-$matcher = new Routing\Matcher\UrlMatcher($routes, $context);
-$resolver = new HttpKernel\Controller\ControllerResolver();
+$response = $sc->get('framework')->handle($request);
 
-$dispatcher = new EventDispatcher();
-$dispatcher->addSubscriber(new HttpKernel\EventListener\RouterListener($matcher));
-
-$listener = new HttpKernel\EventListener\ExceptionListener('Calendar\\Controller\\ErrorController::exceptionAction');
-$dispatcher->addSubscriber($listener);
-
-$dispatcher->addSubscriber(new HttpKernel\EventListener\ResponseListener('UTF-8'));
-$dispatcher->addSubscriber(new HttpKernel\EventListener\StreamedResponseListener());
-$dispatcher->addSubscriber(new Iguana\StringResponseListener());
-
-$framework = new Iguana\Framework($dispatcher, $resolver);
-
-$response = $framework->handle($request);
 $response->send();
