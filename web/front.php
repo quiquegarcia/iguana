@@ -18,12 +18,10 @@ $resolver = new HttpKernel\Controller\ControllerResolver();
 $dispatcher = new EventDispatcher();
 $dispatcher->addSubscriber(new HttpKernel\EventListener\RouterListener($matcher));
 
-$errorHandler = function (HttpKernel\Exception\FlattenException $exception){
-	$msg = 'Algo salio mal! ('.$exception->getMessage().')';
+$listener = new HttpKernel\EventListener\ExceptionListener('Calendar\\Controller\\ErrorController::exceptionAction');
+$dispatcher->addSubscriber($listener);
 
-	return new Response($msg, $exception->getSatusCode());
-};
-$dispatcher->addSubscriber(new HttpKernel\EventListener\ExceptionListener($errorHandler));
+$dispatcher->addSubscriber(new HttpKernel\EventListener\ResponseListener('UTF-8'));
 
 $framework = new Iguana\Framework($dispatcher, $resolver);
 
