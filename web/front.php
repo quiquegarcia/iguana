@@ -5,8 +5,15 @@ require_once __DIR__.'/../vendor/autoload.php';
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\Reference;
 
-$routes = include __DIR__.'/../src/app.php';
 $sc = include __DIR__.'/../src/container.php';
+
+/**
+*Dependency injection container parameters configuration
+*/
+$sc->setParameter('routes', include __DIR__.'/../src/app.php');
+$sc->setParameter('debug', true);
+//echo $sc->getParameter('debug');
+$sc->setParameter('charset', 'UTF-8');
 
 $sc->register('listener.string_response', 'Iguana\StringResponseListener');
 $sc->getDefinition('dispatcher')
